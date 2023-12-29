@@ -13,6 +13,7 @@ namespace LogsViewer.UI
     public class BaseUI
     {
         public LogsManager Manager = new();
+        public LogsList LogsList = new();
 
         public void Draw(Window window)
         {
@@ -25,19 +26,9 @@ namespace LogsViewer.UI
                 ImGui.Columns(2, "Main", true);
                 ImGui.SetColumnWidth(0, io.DisplaySize.X * 0.25f);
                 ImGui.SetColumnWidth(1, io.DisplaySize.X * 0.75f);
-                if (ImGui.BeginChild("Logs"))
-                {
-                    ImGui.Button("Importer");
-                    ImGui.SameLine();
-                    ImGui.Button("Tout Supprimer");
 
-                    ImGui.Separator();
+                LogsList.Draw(this);
 
-                    foreach (var logs in Manager.ListLogs())
-                        ImGui.Text(logs);
-
-                    ImGui.EndChild();
-                }
                 ImGui.NextColumn();
                 if (ImGui.BeginChild("Viewer"))
                 {
