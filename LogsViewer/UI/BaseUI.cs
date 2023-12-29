@@ -14,6 +14,7 @@ namespace LogsViewer.UI
     {
         public LogsManager Manager = new();
         public LogsList LogsList = new();
+        public Viewer Viewer = new();
 
         public void Draw(Window window)
         {
@@ -30,11 +31,9 @@ namespace LogsViewer.UI
                 LogsList.Draw(this);
 
                 ImGui.NextColumn();
-                if (ImGui.BeginChild("Viewer"))
-                {
-                    ImGui.Text("VIEWER");
-                    ImGui.EndChild();
-                }
+                
+                Viewer.Draw(this);
+
                 ImGui.End();
             }
 
