@@ -24,7 +24,9 @@ namespace LogsViewer.UI
 
                 ImGui.Separator();
 
-                foreach (var logs in ui.Manager.GetLogs())
+                var copy = new List<string>(ui.Manager.GetLogs());
+
+                foreach (var logs in copy)
                 {
                     if (ImGui.Selectable(logs))
                         ui.Viewer.Text = ui.Manager.OpenLogs(logs);

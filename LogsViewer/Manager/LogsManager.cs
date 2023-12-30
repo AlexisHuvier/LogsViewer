@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,23 +50,44 @@ namespace LogsViewer.Manager
 
         public void DeleteLogs()
         {
-            foreach (var log in _logCache.Keys)
-                if (File.Exists(Path.Join("Logs", log)))
-                    File.Delete(Path.Join("Logs", log));
-            _logCache.Clear();
-            UpdateListLogs();
+            Task.Run(() =>
+            {
+                foreach (var log in _logCache.Keys)
+                    if (File.Exists(Path.Join("Logs", log)))
+                        File.Delete(Path.Join("Logs", log));
+                _logCache.Clear();
+                UpdateListLogs();
+            });
         }
 
         public void ImportLogs(string? path = null)
         {
-            path ??= Environment.ExpandEnvironmentVariables(Path.Combine("%appdata%", ".minecraft", "logs"));
-
-            foreach (var log in Directory.GetFiles(path))
+            Task.Run(() =>
             {
-                if (log.EndsWith(".log.gz") && !log.Contains("debug"))
+                path ??= Environment.ExpandEnvironmentVariables(Path.Combine("%appdata%", ".minecraft", "logs"));
+
+                foreach (var log in Directory.GetFiles(path))
                 {
-                    DebugManager.Log(SharpEngine.Core.Utils.LogLevel.LogInfo, log);
+                    if (log.EndsWith(".log.gz") && !log.Contains("debug"))
+                    {
+                        using FileStream originalFileStream = File.OpenRead(log);
+
+                        string currentFileName = Path.GetFileName(log);
+                        string newFileName = Path.Combine("Logs", currentFileName.Remove(currentFileName.Length - Path.GetExtension(log).Length));
+
+                        if (!File.Exists(newFileName))
+                        {
+                            using FileStream decompressedFileStream = File.Create(newFileName);
+                            using GZipStream decompressionStream = new(originalFileStream, CompressionMode.Decompress);
+
+                            decompressionStream.CopyTo(decompressedFileStream);
+                            DebugManager.Log(SharpEngine.Core.Utils.LogLevel.LogDebug, "Imported : " + newFileName);
+                        }
+                    }
                 }
-            }
+
+                UpdateListLogs();
+            });            
+        }
     }
 }
