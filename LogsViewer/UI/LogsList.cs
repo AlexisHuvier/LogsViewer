@@ -13,7 +13,8 @@ namespace LogsViewer.UI
         {
             if (ImGui.BeginChild("Logs"))
             {
-                ImGui.Button("Importer");
+                if (ImGui.Button("Importer"))
+                    ui.Manager.ImportLogs();
                 ImGui.SameLine();
                 if (ImGui.Button("Tout Supprimer"))
                     ui.Manager.DeleteLogs();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpEngine.Core.Manager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,5 +55,17 @@ namespace LogsViewer.Manager
             _logCache.Clear();
             UpdateListLogs();
         }
+
+        public void ImportLogs(string? path = null)
+        {
+            path ??= Environment.ExpandEnvironmentVariables(Path.Combine("%appdata%", ".minecraft", "logs"));
+
+            foreach (var log in Directory.GetFiles(path))
+            {
+                if (log.EndsWith(".log.gz") && !log.Contains("debug"))
+                {
+                    DebugManager.Log(SharpEngine.Core.Utils.LogLevel.LogInfo, log);
+                }
+            }
     }
 }
