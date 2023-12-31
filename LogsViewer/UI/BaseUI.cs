@@ -15,6 +15,9 @@ namespace LogsViewer.UI
         public LogsManager Manager = new();
         public LogsList LogsList = new();
         public Viewer Viewer = new();
+        public bool Process = false;
+        public int MaxProcess = 0;
+        public int CurrentProcess = 0;
 
         public void Draw(Window window)
         {
@@ -22,7 +25,7 @@ namespace LogsViewer.UI
 
             ImGui.SetNextWindowSize(new System.Numerics.Vector2(io.DisplaySize.X, io.DisplaySize.Y));
             ImGui.SetNextWindowPos(new System.Numerics.Vector2(0));
-            if (ImGui.Begin("All", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize))
+            if (ImGui.Begin("All", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoBringToFrontOnFocus))
             {
                 ImGui.Columns(2, "Main", true);
                 ImGui.SetColumnWidth(0, io.DisplaySize.X * 0.25f);
@@ -35,6 +38,20 @@ namespace LogsViewer.UI
                 Viewer.Draw(this);
 
                 ImGui.End();
+            }
+
+            if(Process)
+            {
+                ImGui.SetNextWindowPos(new System.Numerics.Vector2(io.DisplaySize.X * 0.5f, io.DisplaySize.Y * 0.5f), ImGuiCond.Always, new System.Numerics.Vector2(0.5f));
+                ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 75));
+
+                if (ImGui.Begin("Progress", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar))
+                {
+                    ImGui.Text($"Progression... {CurrentProcess}/{MaxProcess}");
+                    ImGui.ProgressBar(CurrentProcess / (float)MaxProcess, new System.Numerics.Vector2(-1, 0));
+                    ImGui.End();
+                }
+
             }
 
             DebugManager.SeRenderImGui(window);

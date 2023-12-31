@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Manager;
+﻿using LogsViewer.UI;
+using SharpEngine.Core.Manager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,23 +49,36 @@ namespace LogsViewer.Manager
             UpdateListLogs();
         }
 
-        public void DeleteLogs()
+        public void DeleteLogs(BaseUI ui)
         {
             Task.Run(() =>
             {
+                ui.Process = true;
+                ui.MaxProcess = _logCache.Keys.Count;
+                ui.CurrentProcess = 0;
+
                 foreach (var log in _logCache.Keys)
+                {
                     if (File.Exists(Path.Join("Logs", log)))
                         File.Delete(Path.Join("Logs", log));
+                    ui.CurrentProcess++;
+                }
+
+                ui.Process = false;
                 _logCache.Clear();
                 UpdateListLogs();
             });
         }
 
-        public void ImportLogs(string? path = null)
+        public void ImportLogs(BaseUI ui, string? path = null)
         {
             Task.Run(() =>
             {
                 path ??= Environment.ExpandEnvironmentVariables(Path.Combine("%appdata%", ".minecraft", "logs"));
+
+                ui.Process = true;
+                ui.MaxProcess = Directory.GetFiles(path).Length;
+                ui.CurrentProcess = 0;
 
                 foreach (var log in Directory.GetFiles(path))
                 {
@@ -84,8 +98,10 @@ namespace LogsViewer.Manager
                             DebugManager.Log(SharpEngine.Core.Utils.LogLevel.LogDebug, "Imported : " + newFileName);
                         }
                     }
+                    ui.CurrentProcess++;
                 }
 
+                ui.Process = false;
                 UpdateListLogs();
             });            
         }

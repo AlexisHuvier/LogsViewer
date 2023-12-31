@@ -13,13 +13,13 @@ namespace LogsViewer.UI
         {
             if (ImGui.BeginChild("Logs"))
             {
-                if (ImGui.Button("Importer"))
-                    ui.Manager.ImportLogs();
+                if (ImGui.Button("Importer") && !ui.Process)
+                    ui.Manager.ImportLogs(ui);
                 ImGui.SameLine();
-                if (ImGui.Button("Tout Supprimer"))
-                    ui.Manager.DeleteLogs();
+                if (ImGui.Button("Tout Supprimer") && !ui.Process)
+                    ui.Manager.DeleteLogs(ui);
                 ImGui.SameLine();
-                if (ImGui.Button("Rafraichir"))
+                if (ImGui.Button("Rafraichir") && !ui.Process)
                     ui.Manager.UpdateListLogs();
 
                 ImGui.Separator();
@@ -28,9 +28,9 @@ namespace LogsViewer.UI
 
                 foreach (var logs in copy)
                 {
-                    if (ImGui.Selectable(logs))
+                    if (ImGui.Selectable(logs) && !ui.Process)
                         ui.Viewer.Text = ui.Manager.OpenLogs(logs);
-                    if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                    if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right) && !ui.Process)
                         ImGui.OpenPopup("Context Menu - " + logs);
 
                     if (ImGui.BeginPopup("Context Menu - " + logs))
