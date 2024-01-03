@@ -12,10 +12,12 @@ namespace LogsViewer.Manager
 {
     public class LogsManager
     {
+        private BaseUI BaseUI;
         private Dictionary<string, string?> _logCache = [];
 
-        public LogsManager()
+        public LogsManager(BaseUI baseUI)
         {
+            BaseUI = baseUI;
             if (!Directory.Exists("Logs"))
                 Directory.CreateDirectory("Logs");
             UpdateListLogs();
@@ -26,6 +28,7 @@ namespace LogsViewer.Manager
             _logCache.Clear();
             foreach (var log in Directory.GetFiles("Logs"))
                 _logCache.Add(Path.GetFileName(log), null);
+            BaseUI.Viewer.Text = "";
         }
 
         public Dictionary<string, string?>.KeyCollection GetLogs() => _logCache.Keys;

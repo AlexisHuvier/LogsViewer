@@ -12,12 +12,17 @@ namespace LogsViewer.UI
 {
     public class BaseUI
     {
-        public LogsManager Manager = new();
+        public LogsManager Manager;
         public LogsList LogsList = new();
         public Viewer Viewer = new();
         public bool Process = false;
         public int MaxProcess = 0;
         public int CurrentProcess = 0;
+
+        public BaseUI()
+        {
+            Manager = new LogsManager(this);
+        }
 
         public void Draw(Window window)
         {
