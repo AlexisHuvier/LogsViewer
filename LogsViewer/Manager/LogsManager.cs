@@ -46,7 +46,6 @@ namespace LogsViewer.Manager
 
         public void DeleteLogs(string path)
         {
-            _logCache.Remove(path);
             if (File.Exists(Path.Join("Logs", path)))
                 File.Delete(Path.Join("Logs", path));
             UpdateListLogs();
@@ -68,7 +67,6 @@ namespace LogsViewer.Manager
                 }
 
                 ui.Process = false;
-                _logCache.Clear();
                 UpdateListLogs();
             });
         }
@@ -107,6 +105,15 @@ namespace LogsViewer.Manager
                 ui.Process = false;
                 UpdateListLogs();
             });            
+        }
+
+        public void RenameLog(string log, string editName)
+        {
+            if (File.Exists(Path.Join("Logs", log)))
+            {
+                File.Move(Path.Join("Logs", log), Path.Join("Logs", editName));
+                UpdateListLogs();
+            }
         }
     }
 }

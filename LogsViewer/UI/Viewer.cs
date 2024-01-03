@@ -9,7 +9,7 @@ namespace LogsViewer.UI
 {
     public class Viewer
     {
-        public string Text { get; set; } = "Sélectionnez un log...";
+        public string Text = "Sélectionnez un log...";
 
         public void Draw(BaseUI ui)
         {
